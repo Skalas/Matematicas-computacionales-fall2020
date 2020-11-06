@@ -1,0 +1,42 @@
+---
+title: "Tarea"
+author: "Miguel Angel Escalante Serrato"
+date: "Nov 3, 2020"
+output:
+  html_document:
+    theme: spacelab
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tarea 1
+
+## Parte 1
+
+De la base de datos de proyecciones poblacionales de CONAPO ([aquí](http://www.conapo.gob.mx/work/models/CONAPO/Datos_Abiertos/Proyecciones2018/pob_mit_proyecciones.csv) la base), hacer al menos 5 visualizaciones para entender el crecimiento poblacional. Se tienen muchas variables y categorías por explorar, se espera un análisis y contexto de las gráficas así como una interpretación. 
+
+## Parte 2
+
+Con la misma base de datos, se requiere hacer todas las visualizaciones interactivas; las mismas 5 o más visualizaciones, ahora interactivas (recuerden plot.ly). Sugerencia: el año tiene que ser una de estas categorías ya que son proyecciones. 
+
+
+## Parte 3 
+
+Hacer todos los ejercicios hechos durante la clase. 
+
+- Ejercicios durante la sesión 1
+- Visualizaciones interactivas para el cruce de variables filtrado por sexo.
+- 
+
+# Euler 
+
+Problema 13 y 16 del [Projecto Euler](https://projecteuler.net/)
+
+# Fecha de entrega 
+
+- Martes 10 de Noviembre
