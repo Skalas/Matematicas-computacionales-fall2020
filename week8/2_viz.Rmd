@@ -133,6 +133,7 @@ ggplot(oly12, aes(Height, Weight)) + geom_point() +
 ## ¿Qué buscamos en los Scatterplots?
 
 Acerca de [correlación](https://www.youtube.com/watch?v=VFjaBh12C6s)
+
 - Relaciones entre variables, puede que haya una fuerte relación entre las variables, buscamos causalidad aunque debe quedar claro que es muy complicado establecer esta relación en general.
 - Asociaciones, grupos de variables que puedan estar relacionados entre si, sin ser afectados por la misma causa directa.
 - Valores extremos: Puede haber casos de variables extremas en la relación de las variables sin que haya algún extremo en ninguna de las variables individuales. 

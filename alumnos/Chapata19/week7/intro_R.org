@@ -1,0 +1,317 @@
+#+TITLE: Introducción a R
+#+AUTHOR: Miguel Angel Escalante Serrato
+#+EMAIL:  miguel.escalante@itam.mx
+#+DATE: 8-Oct-2020
+#+LANGUAGE:  es
+#+OPTIONS: num:nil toc:nil
+#+REVEAL_THEME: moon
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_TRANS: cube
+#+REVEAL_SLIDE_NUMBER: t
+#+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Matemáticas Computacionales">
+#+PROPERTY: header-args:R  :session *R*  :results output org :exports both :eval yes
+#+REVEAL_EXTRA_CSS: ./presentacion.css
+* R
+#+ATTR_HTML: :height 30%, :width 30%
+[[./img/Rlogo.png]]
+*** ¿Qué es  R?
+    R es un lenguaje y un ambiente para cómputo estadístico, es un proyecto GNU similar al lenguaje y ambiente S, desarrollado por los laboratorios Bell. 
+*** Huh ¿?
+    R es un lenguaje que nos ayuda a leer, transformar, graficar, modelar y entender datos.
+*** ¿Por qué R?
+    - R  está enfocado al manejo modelado y graficación de información.
+    - Miles de paquetes, con los últimos desarrollos en estadística.
+    - Manejo de series de tiempo, bases de datos, datos geoespaciales.
+    - Conecta muy bien.
+      
+* Bases del lenguaje.
+** Rstudio
+*** Variables
+    Los objetos y funciones se almacenan con el operador ~<-~
+    
+    #+BEGIN_SRC R
+    x <- 2
+    y <- 3
+    #+END_SRC
+
+*** Variables
+    Podemos ver lo que tienen las variables al teclear el nombre: 
+    
+    #+BEGIN_SRC R
+    x
+    y
+    #+END_SRC
+
+*** Vectores
+    Un vector es un conjunto de cosas, las cosas contenidas tienen que ser del mismo tipo, e.g. todos números, todos caracteres. 
+    #+BEGIN_SRC R
+    v <- c(1, 2, 3, 42)
+    v1 <- c(v,'a')
+    v
+    v1
+    #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_SRC org
+    [1]  1  2  3 42
+    [1] "1"  "2"  "3"  "42" "a"
+    #+END_SRC
+
+*** Vectores
+    Se pueden generar de distintas maneras: 
+    #+BEGIN_SRC R
+    v <- 1:10
+    v <- seq(1,10)
+    v <- seq(1,20,by=0.2)
+    v
+    #+END_SRC   
+*** Vectores
+
+    También se pueden crear vectiores repitiendo algún otro vecrtor :). 
+
+    #+BEGIN_SRC R
+    v <- rep(1:20,5)
+    v
+    #+END_SRC   
+
+*** Vectores
+    Podemos acceder a determinados valores del vector por su posición. (Ojo, los índices en R empiezan en 1.)
+    #+BEGIN_SRC R
+    v[3]
+    #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_SRC org
+    [1] 8
+    #+END_SRC
+    
+*** Vectores
+    Se pueden hacer operaciones sobre vectores:
+
+    #+BEGIN_SRC R
+    (v*2+42)^3
+    #+END_SRC   
+
+    #+RESULTS:
+    #+BEGIN_SRC org
+      [1]  85184  97336 110592 125000 140608 157464 175616 195112 216000 238328
+     [11] 262144 287496 314432 343000 373248 405224 438976 474552 512000 551368
+     [21]  85184  97336 110592 125000 140608 157464 175616 195112 216000 238328
+     [31] 262144 287496 314432 343000 373248 405224 438976 474552 512000 551368
+     [41]  85184  97336 110592 125000 140608 157464 175616 195112 216000 238328
+     [51] 262144 287496 314432 343000 373248 405224 438976 474552 512000 551368
+     [61]  85184  97336 110592 125000 140608 157464 175616 195112 216000 238328
+     [71] 262144 287496 314432 343000 373248 405224 438976 474552 512000 551368
+     [81]  85184  97336 110592 125000 140608 157464 175616 195112 216000 238328
+     [91] 262144 287496 314432 343000 373248 405224 438976 474552 512000 551368
+    #+END_SRC
+
+    A estas se les llama operaciones /vectorizadas/
+*** Vectores
+    Podemos esta operación vectorizada nos dice los elementos positivos del vector
+    #+BEGIN_SRC R
+    x <- c(1, -3, -2, 4, -10, 2, 3, 90)
+    x > 0
+    #+END_SRC
+    #+RESULTS:
+    #+BEGIN_SRC org
+    [1]  TRUE FALSE FALSE  TRUE FALSE  TRUE  TRUE  TRUE
+    #+END_SRC
+*** Vectores
+    Mejor aún, podemos obtener los vectores!
+    #+BEGIN_SRC R
+    x[x > 0]
+    #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_SRC org
+    [1]  1  4  2  3 90
+    #+END_SRC
+
+*** Factores
+Cuando uno quiere analizar datos, regularmente necesita variables que funcionan como etiquetas. Estas etiquetas pueden ser contadas, pero no sumadas. A este tipo de variables se les conoce como variables /categóricas/ y en =R=  se llaman *factores*.
+
+*** Factores
+Es posible crearlas a partir de un =vector=
+
+#+BEGIN_SRC R
+f <- c("M", "F", "M", "M", "F", "M")
+f <- factor(f)
+f
+#+END_SRC
+
+Y pueden tener una descripción larga (=label=)
+
+#+BEGIN_SRC R
+f <- factor(c("M", "F", "M", "M", "F", "M", "F"), 
+           levels=c("M", "F"), 
+	   labels=c("Hombre", "Mujer"))
+f
+#+END_SRC
+
+*** Factores
+
+Hagámos una copia de =f=
+
+#+BEGIN_SRC R
+g <- f
+g
+f
+#+END_SRC
+
+*** Factores
+
+Los =levels= se pueden extraer con la siguiente función:
+
+#+BEGIN_SRC R
+levels(g)
+#+END_SRC
+
+*** Factores
+
+¿Qué pasa si quiero agregar un nuevo elemento al final del factor?
+
+#+BEGIN_SRC R
+g[length(g)+1] <- "NR"
+g
+#+END_SRC
+
+Mmmm, como el /nivel/ =NR= no estaba definido, lo agrega como un valor inexistente (=NA=).
+
+*** Factores
+
+#+BEGIN_SRC R
+g <- factor(c("a", "b", "a", "a", "b", "b", "b"), 
+            levels=c("a", "b", "c"))
+g
+#+END_SRC
+
+
+#+BEGIN_SRC R
+g[length(g)+1] <- "c"
+g
+#+END_SRC
+
+*** Factores
+
+Una tabla con los conteos por nivel se puede obtener fácilmente
+
+#+BEGIN_SRC R
+table(g)
+#+END_SRC
+
+*** Factores
+
+#+BEGIN_SRC R
+a <- factor(c("estudiante", "profesor", "estudiante", 
+             "profesor", "estudiante", "estudiante", 
+	     "estudiante"))
+a
+#+END_SRC
+
+Es posible mezclar los dos factores en una tabla 
+
+#+BEGIN_SRC R
+t <- table(a,f)
+t
+#+END_SRC
+
+Nota como se le está asignando el género por renglón.
+
+*** Factores
+
+Y una tabla de /proporciones/ nos da (obviamente) la proporción
+
+#+BEGIN_SRC R
+prop.table(t, 2) 
+#+END_SRC
+
+* Data frames
+*** Data frames
+
+- Cuando se piensa en análisis de datos, usualmente se tiene en mente una estructura de observaciones y características de las mismas, en una especie de "tabla", la característica común es que son objetos rectangulares (de dos dimensiones).
+
+- =R= proveé una abstración para los datos en formato rectangular llamado =data.frame=
+*** Data Frames
+#+BEGIN_SRC R
+df <- data.frame(
+         var.1=c('A', 'B', 'C', 'A'), 
+	 var.2=c('h', 'a', 'u', 'p'), 
+	 var.3=c(1, 2, 3, 4.5))
+df
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+  var.1 var.2 var.3
+1     A     h   1.0
+2     B     a   2.0
+3     C     u   3.0
+4     A     p   4.5
+#+END_SRC
+
+*** Data frames
+
+La extracción ahora debe de hacerse en dos dimensiones (renglones, columnas)
+
+#+BEGIN_SRC R
+df[3,1]
+#+END_SRC
+
+Extraer un renglón
+
+#+BEGIN_SRC R
+df[3,]
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+  var.1 var.2 var.3
+3     C     u     3
+#+END_SRC
+
+
+*** Data frames
+
+Extraer una columna
+
+#+BEGIN_SRC R
+df[,3]
+#+END_SRC
+
+Se puede utilizar el nombre de la columna para extraer la columna completa
+
+#+BEGIN_SRC R
+df$var.3
+df['var.3']
+#+END_SRC
+
+*** Data frames
+
+La extracción "mágica" se preserva también en los =data.frame=s
+
+#+BEGIN_SRC R
+df[df$var.3 > 2,]
+#+END_SRC
+
+
+#+BEGIN_SRC R
+df[df$var.1 == "A", "var.3"]
+#+END_SRC
+
+*** Data frames
+
+Así como los vectores (y sus derivados) tenían longitud, los =data.frame= tiene **tamaño** y es bidimensional
+
+#+BEGIN_SRC R
+dim(df)
+#+END_SRC
+
+#+BEGIN_SRC R
+nrow(df)
+ncol(df)
+#+END_SRC
+
+#+BEGIN_SRC R
+names(df)
+#+END_SRC
