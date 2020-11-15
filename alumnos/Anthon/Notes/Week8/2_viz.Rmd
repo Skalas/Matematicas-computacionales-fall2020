@@ -106,13 +106,13 @@ Para estas visualizaciones podemos tomar en cuenta la ocurrencia de distintas va
 - Los gráficos de barras se pueden usar para graficar variables nominales, ordinales y discretas.
 - El orden de las barras afeta la manera de ver los resultados. 
 
-Ejercicios: 
+## Ejercicios: 
 
-## Máquinas tragamonedas
+### Máquinas tragamonedas
 
 En el paquete DAAG, está el dataset vlt, muestren si los símbolos que aparecen tienen la misma frecuencia, o no. Ejes comparables.
 
-## Daño gastrointestinal
+### Daño gastrointestinal
 
 Del conjunto de datos `Lanza` del paquete `HSAUR2`, hay cuatr estudios, dibujen un gráfico para comparar los tamaños de los estudios, ¿son iguales? El resultado se mide en la variable classificación, ¿qué opinan? 
 
@@ -133,6 +133,7 @@ ggplot(oly12, aes(Height, Weight)) + geom_point() +
 ## ¿Qué buscamos en los Scatterplots?
 
 Acerca de [correlación](https://www.youtube.com/watch?v=VFjaBh12C6s)
+
 - Relaciones entre variables, puede que haya una fuerte relación entre las variables, buscamos causalidad aunque debe quedar claro que es muy complicado establecer esta relación en general.
 - Asociaciones, grupos de variables que puedan estar relacionados entre si, sin ser afectados por la misma causa directa.
 - Valores extremos: Puede haber casos de variables extremas en la relación de las variables sin que haya algún extremo en ninguna de las variables individuales. 
@@ -197,16 +198,18 @@ ggplot(oly12, aes(Height,Weight))+geom_point(size=1)+facet_wrap(~Sport)
 - Agregar los suavizados es trivial y ayuda con el modelado de nuesrta información. 
 
 
-## Películas:
+## Ejercicios:
+
+### Películas:
 
 ¿Cómo se ve el scatterplpot si quitamos los que tienen más de 1000 votos?
 Ahora filtremos los mayores a 9. 
 ¿Pasa algo? 
 
-## Autos: 
+### Autos: 
 Grafiquen 1/MPG.City, vs horsepowerhay ¿una relación lineal? ¿Cuáles son los outliers?
 
-## Bancos
+### Bancos
 
 Dentro del paquete `Sleuth2`, los datos: `case1202`, tiene tres variables medidas en meses, de: Edad, Seniority, Experience. 
 
