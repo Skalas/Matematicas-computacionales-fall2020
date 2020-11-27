@@ -1,12 +1,14 @@
 # Escribe aquí la clase GA
 import numpy as np
 from Cromosoma import BitCromosoma
+import random
 
 
 class GA:
     def __init__(
             self, tamaño_poblacion, tasa_mutacion,
-            tasa_crossover, max_generaciones, fitness
+            tasa_crossover, max_generaciones, fitness,
+            num_elites
     ):
         self.tamaño_poblacion = tamaño_poblacion
         self.tasa_mutacion = tasa_mutacion
@@ -17,10 +19,12 @@ class GA:
         self.generacion = 0
         self.mejor_solucion_historica = ''
         self.mejor_solucion_actual = ''
+        self.num_elites = num_elites
 
     def run(self):
         fitness_arr = []
-        # Evaluación del fitness de toda la población
+        self.poblacion.sort(reverse=True, key=self.fitness)
+        # Evaluación del fitness de toda la poblacion
         for i in self.poblacion:
             fitness_arr.append(self.fitness(i))
         # Encontramos la mejor solución de la generación.
@@ -36,6 +40,26 @@ class GA:
             return self.mejor_solucion_actual
         else:
             return False
+
+    def crear_poblacion(self, fitness_arr):
+        
+        pass
+
+    def crossover(self, i, j):
+        crossover_point = random.randint(0, i.length)
+        pass
+
+    def seleccionar(self, fitness_arr):
+        new_gen = self.poblacion[1:self.num_elites]
+        fitness_poblacion = sum(fitness_arr)
+        for i in range(len(self.poblacion) - self.num_elites):
+            num_azar = np.random.uniform(low=0, high=fitness_poblacion)
+            suma_fitness = 0
+            for j in self.poblacion:
+                suma_fitness += self.fitness(j)
+                if suma_fitness > num_azar:
+                    new_gen.append(j)
+        return new_gen
 
     def plot():
         pass
