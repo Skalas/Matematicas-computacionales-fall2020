@@ -1,0 +1,98 @@
+---
+title: "Plotly"
+author: "Miguel Angel Escalante Serrato"
+date: "December 3, 2016"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    css: estilos.css
+    theme: spacelab
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, error = F, message = F)
+library(plotly)
+library(ggplot2)
+```
+
+# Plotly 
+
+Plotly es una libraría de código abierto en R que conecta con Javascript, esto ayuda a que nuesras gráficas se vuelvan interactivas. 
+
+## Diamantes
+
+```{r}
+d <- diamonds[sample(nrow(diamonds), 1000), ]
+plot_ly(d, x = ~carat, y = ~price, color = ~carat,
+        size = ~carat, text = ~paste("Clarity: ", clarity))
+```
+
+## ggplotly
+
+Se puede hacer una integración entre ggplot2 y plotly, misma que hace los gráficos de ggplot2 interactivos: 
+```{r}
+p <- ggplot(data = d, aes(x = carat, y = price)) +
+  geom_point(aes(text = paste("Clarity:", clarity))) +
+  geom_smooth(aes(colour = cut, fill = cut)) + facet_wrap(~ cut)
+
+ggplotly(p)
+```
+
+
+
+## Series de Tiempo:
+
+
+```{r}
+library(plotly)
+today <- Sys.Date()
+tm <- seq(0, 600, by = 10)
+x <- today - tm
+y <- rnorm(length(x))
+plot_ly(x = ~x, y = ~y, text = paste(tm, "days from today"))
+```
+
+## Gráficos de barras
+
+```{r}
+p <- plot_ly(
+  x = c("giraffes", "orangutans", "monkeys"),
+  y = c(20, 14, 23),
+  name = "SF Zoo",
+  type = "bar"
+)
+```
+
+
+Ahora varios zoológicos: 
+
+```{r}
+
+Animals <- c("giraffes", "orangutans", "monkeys")
+SF_Zoo <- c(20, 14, 23)
+LA_Zoo <- c(12, 18, 29)
+data <- data.frame(Animals, SF_Zoo, LA_Zoo)
+
+plot_ly(data, x = ~Animals, y = ~SF_Zoo, type = 'bar', name = 'SF Zoo') %>%
+  add_trace(y = ~LA_Zoo, name = 'LA Zoo') %>%
+  layout(yaxis = list(title = 'Count'), barmode = 'group')
+
+```
+
+
+Otra forma:
+
+```{r}
+Animals <- c("giraffes", "orangutans", "monkeys")
+SF_Zoo <- c(20, 14, 23)
+LA_Zoo <- c(12, 18, 29)
+data <- data.frame(Animals, SF_Zoo, LA_Zoo)
+
+plot_ly(data, x = ~Animals, y = ~SF_Zoo, type = 'bar', name = 'SF Zoo') %>%
+  add_trace(y = ~LA_Zoo, name = 'LA Zoo') %>%
+  layout(yaxis = list(title = 'Count'), barmode = 'stack')
+
+```
+
