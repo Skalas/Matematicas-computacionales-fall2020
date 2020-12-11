@@ -1,0 +1,246 @@
+---
+title: "Tarea 3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Parte 1
+
+De la base de datos de proyecciones poblacionales de CONAPO (aquí la base), hacer al menos 5 visualizaciones para entender el crecimiento poblacional. Se tienen muchas variables y categorías por explorar, se espera un análisis y contexto de las gráficas así como una interpretación.
+
+```{r cars}
+library(dplyr)
+#se define el data frame
+Datos <- read.csv("pob_mit_proyecciones.csv", header = TRUE) 
+#se define el data frame sumando las poblaciones
+Datos2 <-data.frame(Datos) %>% 
+group_by(AÑO,ENTIDAD)  %>% summarise(TOTAL = sum(POBLACION), W = sum(POBLACION[SEXO == 'Mujeres']), M = sum(POBLACION[SEXO == 'Hombres']))
+```
+
+
+En las siguientes gráficas se puede observar el crecimiento de la población por estado, en general hay una tendecia creciente en la mayoria de los estados hasta después de 2030, cabe notar que el decrecimiento de la población más evidente es en la CDMX
+
+```{r , echo=FALSE,fig.height=10, fig.width=20}
+library(ggplot2)
+# se realiza la gráfica
+p1<-ggplot(Datos2, aes(AÑO,TOTAL),colour = W) + 
+            geom_line(color= "blue",size=1) + 
+            facet_wrap(~ENTIDAD, nrow = 15, ncol = 9, scales = "free") +
+            labs(title="Crecimiento de la Población por  Estado", x="Año", y="Población por Año") 
+p1
+```
+
+En las siguientes gráficas se puede observar el crecimiento de la población por genero en cada estado, en general hay una tendecia creciente en la mayoria de los estados hasta después de 2030 y se puede observar una población mayor de mujeres en casi todos los estados.
+
+```{r pressure, echo=FALSE,fig.height=10, fig.width=20}
+library(ggplot2)
+# se realiza la gráfica
+p2<-ggplot(Datos2)+  
+            geom_point(aes(AÑO,W),color="red")+geom_point(aes(AÑO,M),color="blue")+
+            facet_wrap(~ENTIDAD, nrow = 15, ncol = 9, scales = "free") +
+            labs(title="Crecimiento de la Población por  Estado de HOMBRES(AZUL) Y MUJERES(RED)", x="Año", y="Población por Año") 
+p2
+```
+
+En la siguente gráfica el crecimiento total de la población en México por sexo, se puede ver que hay una mayor cantidad de mujeres, pero en general tanto hombres como mujeres comienza a disminuir su crecimiento a través del tiempo
+
+```{r,,fig.height=10, fig.width=20}
+# se realiza la gráfica
+p3<-ggplot(Datos2)+  
+            geom_point(aes(AÑO,W),color="red")+geom_point(aes(AÑO,M),color="green")+
+            ggtitle("Crecimiento en México de la Población Total por Sexo")+
+            xlab("Año")+
+            ylab("Población Total")
+p3
+```
+
+En las siguientes Gráficas se contrasta por edad la población en México en los años 2020 y 2050 se puede observar que el promedio de la gente en el 2050 es más mayor e edad que en 2020, es decir hay más gente adulta que joven. 
+
+
+```{r,fig.height=15, fig.width=20}
+
+# se  define un nuevo data frame  y se realizan dos gráficas para comparar
+Datos3 <-data.frame(Datos) %>% 
+group_by(SEXO,EDAD,AÑO)  %>% summarise(TOTAL = sum(POBLACION))
+
+p41<-ggplot(filter(Datos3, AÑO==2020) , aes(x = EDAD,
+                y = ifelse(SEXO == 'Mujeres', -TOTAL, TOTAL),
+                fill = SEXO)) + geom_col(color="green")  +  coord_flip()+ labs(
+    title = 'Distribución de la población por edad en 2020',
+    y = "Población por sexo",
+    x ='EDAD')
+p42<-ggplot(filter(Datos3, AÑO==2050) , aes(x = EDAD,
+                y = ifelse(SEXO == 'Mujeres', -TOTAL, TOTAL),
+                fill = SEXO)) + geom_col(color="blue")  +  coord_flip()+ labs(
+    title = 'Distribución de la población por edad en 2050',
+    y = "Población por sexo",
+    x ='EDAD')
+p41
+p42
+
+```
+
+
+
+
+
+
+En las siguientes Gráficas se contrasta por edad la población en CDMX en los años 2020 y 2050 se puede observar que al igual que en las gráficas de arriba  hay más gente adulta que joven, pero con una tendencia mayor edad que México en general. 
+
+```{r}
+# se  define un nuevo data frame  y se realizan dos gráficas para comparar
+Datos4 <-data.frame(Datos) %>% 
+group_by(SEXO,EDAD,AÑO,ENTIDAD)  %>% summarise(TOTAL = sum(POBLACION))
+
+p51<-ggplot(filter(Datos4, AÑO==2020,ENTIDAD=="Ciudad de México") , aes(x = EDAD,
+                y = ifelse(SEXO == 'Mujeres', -TOTAL, TOTAL),
+                fill = SEXO)) + geom_col(color="RED")  +  coord_flip()+ labs(
+    title = 'Distribución de la población por edad CDMX 2020',
+    y = "Población por sexo",
+    x ='EDAD')
+p52<-ggplot(filter(Datos4, AÑO==2050,ENTIDAD=="Ciudad de México") , aes(x = EDAD,
+                y = ifelse(SEXO == 'Mujeres', -TOTAL, TOTAL),
+                fill = SEXO)) + geom_col(color="blue")  +  coord_flip()+ labs(
+    title = 'Distribución de la población por edad CDMX 2050',
+    y = "Población por sexo",
+    x ='EDAD')
+```
+
+
+Parte 2
+
+Con la misma base de datos, se requiere hacer todas las visualizaciones interactivas; las mismas 5 o más visualizaciones, ahora interactivas (recuerden plot.ly). Sugerencia: el año tiene que ser una de estas categorías ya que son proyecciones.
+
+
+
+```{r}
+# se gráfica de manera interactiva
+library(plotly)
+ggplotly(p1)
+ggplotly(p2)
+ggplotly(p3)
+
+```
+```{r}
+# se gráfica de manera interactiva
+library(plotly)
+ggplotly(p41)
+ggplotly(p42)
+```
+
+```{r}
+# se gráfica de manera interactiva
+library(plotly)
+ggplotly(p51)
+ggplotly(p52)
+```
+
+
+
+Parte 3
+
+Velocidad de la luz
+
+Tenemos 5 experimentos con 20 corridas de mediciones de la velocidad de la luz.
+
+    ¿Cómo exponen los resultados?
+    ¿Los resultados se ven equivalentes entre los experimentos?
+
+
+
+```{r}
+library(MASS)
+library(ggplot2)
+library(gridExtra)
+# se define el data frame y se gráfica
+vl <- data.frame(michelson)
+ggplot(vl, aes(Speed, fill=Expt)) +
+       geom_histogram(binwidth=100) + xlab("Speed (km/hr)") +
+       ylab("") + facet_grid(~Expt) +
+       theme(legend.position="none")
+```
+Measurements of the speed of light in air, made between 5th June and 2nd July, 1879. The data consists of five experiments, each consisting of 20 consecutive runs. The response is the speed of light in km/s, less 299000. The currently accepted value, on this scale of measurement, is 734.5. Expt
+
+The experiment number, from 1 to 5.
+
+Run
+
+The run number within each experiment.
+
+Speed
+
+Speed-of-light measurement
+
+
+
+
+Titanic
+
+
+¿Qué se les ocurre para graficar todo?
+
+¿Cuántos pasajeros en total viajaban por clase?
+
+ Exploren una por una las otras variables categóricas del dataset
+
+
+```{r}
+# se define el data frame y se realizan diversas gráficas
+t <- data.frame(Titanic)
+data.frame(t) %>% 
+group_by(Class) %>%
+summarise (count = sum(Freq))
+
+ggplot(t,aes(Age,Freq)) + geom_col() +
+            facet_wrap(~Class, nrow = 15, ncol = 9, scales = "free") +
+            labs(title="Frecuencia edad de Pasajeros por clase", x="Edad", y="Frecuencia") 
+ggplot(t,aes(Survived,Freq)) + geom_col() +
+            facet_wrap(~Class, nrow = 15, ncol = 9, scales = "free") +
+            labs(title="Frecuencia supervivencia de Pasajeros por clase", x="surv", y="Frecuencia")
+ggplot(t,aes(Sex,Freq)) + geom_col() +
+            facet_wrap(~Class, nrow = 15, ncol = 9, scales = "free") +
+            labs(title="Frecuencia de Genero de Pasajeros por clase", x="Sexo", y="Frecuencia")
+
+
+
+```
+
+
+
+Estudiantes.
+
+El conjunto survey
+
+contiene información de estudiantes tomando su primer curso de estadística:
+
+Hacer el histograma y poner encima la estimación de la densidad, ¿hay bimodalidad?
+Jueguen con los anchos para tener mejores estimaciones de la densidad, ¿cuál es mejor?
+Comparen las distribuciones de hombres y mujeres, que compartan la escala, con distintas estimaciones de densidad.
+
+Se puede observar que si hay bimodalidad
+
+
+```{r}
+# se gráfica la densidad y el histograma
+ggplot(survey , aes(x=Height, fill=Sex)) +
+       geom_histogram(binwidth = 2)
+ggplot(survey , aes(x=Height, fill=Sex))+ geom_density(alpha = 0.1)
+```
+Bancos
+
+Dentro del paquete Sleuth2, los datos: case1202, tiene tres variables medidas en meses, de: Edad, Seniority, Experience.
+
+¿Qué hay en la matriz de scatterplots? ¿Por?
+
+En matriz se puede ver una tabla de gráficos de dispersión de una variable con respecto a las demás
+
+```{r}
+
+#se gráfica la matriz de scatterplots
+
+library(Sleuth2)
+pairs(case1202)
+```
+
