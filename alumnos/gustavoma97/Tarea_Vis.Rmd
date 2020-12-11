@@ -1,0 +1,254 @@
+---
+title: "Tarea_Vis"
+author: "Gustavo Alejandro Muñoz Avilés"
+date: "19/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Descargamos libreria necesaria...
+
+```{r libraries, warning=FALSE} 
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(MASS)
+library(readxl)
+library(plotly)
+library(UsingR)
+```
+
+
+Analizamos la estructura de los datos
+```{r, data}
+v1<-data.frame(michelson)
+str(v1)
+head(v1)
+
+```
+Primero cargamos datos:
+
+```{r cargar datos, }
+conapo_pob_ini<-read.csv('pob_ini_proyecciones.csv',header = TRUE,sep=',')
+```
+
+Ahora analizamos su estructura:
+```{r,}
+str(conapo_pob_ini)
+```
+
+
+
+```{r estructura, echo=FALSE}
+head(conapo_pob_ini)
+```
+Para visualizar el crecimiento poblacional al inicio del año desde 1950 hasta 2020 modificamos la tabla original de datos para extraer solo las columnas de interés para este primer gráfico.
+
+```{r visualizacion 1, echo=FALSE}
+año_pob<-conapo_pob_ini%>%
+  group_by(AÑO)%>%
+  filter(AÑO<=2020 & ENTIDAD=='República Mexicana')%>%
+  summarise(pob=sum(POBLACION)/10^6)
+```
+```{r,echo=FALSE}
+año_pob%>%ggplot(aes(AÑO,pob))+
+  geom_point()+
+  xlab('Año')+
+  ylab("Pobalción (en millones)")+
+  ggtitle('Población al inicio de año en México (1950-2020)')
+
+```
+Es fácil notar que la tendencia dicta un crecimiento anual en la pobblación. Ahora veamos la compraración por género.
+
+```{r vis 2, echo=FALSE}
+conapo_pob_ini%>%
+  group_by(SEXO,AÑO)%>%
+  filter(AÑO<=2020 & ENTIDAD=='República Mexicana')%>%
+  summarise(pob=sum(POBLACION)/10^6)%>%
+  ggplot(aes(AÑO,pob,col=SEXO))+
+  geom_line(size=2)+
+  xlab('Año')+
+  ylab('Población en Millones')+
+  ggtitle('Población por genero en México al inicio del año (1950-2020)')
+```
+
+Como se puede observar, las mujeres han dominado en número de población a los hombres a lo largo de los años considerando el total de toda de población en el país de cada género. Pero, ¿será cierto en todas las entidades federativas individualmente?
+
+Veamos como se distribuían las poblaciones por genero en algunas entidades federativas el año pasado (2019)...
+
+```{r vis 3, echo=FALSE}
+conapo_pob_ini%>%
+  filter(AÑO==2019 & ENTIDAD==c('Ciudad de México','Sinaloa','Chihuahua'))%>%
+  group_by(SEXO,ENTIDAD)%>%
+  summarise(pob=sum(POBLACION)/10^6)%>%
+  ggplot(aes(x=SEXO,y=pob,fill=SEXO))+
+  geom_bar(position="dodge", stat="identity")+
+  geom_text(aes(label=pob))+
+  xlab('Genero')+
+  ylab('Población en Millones')+
+  ggtitle('Población por genero en México (2019)')+
+  facet_grid(ENTIDAD~.)
+```
+
+A diferencia de la Ciudad de México, Chihuahua y Sonora, dos estdos del norte, perciben un mayor número de hombres que de mujeres. Podríamos pensar en que esta tendencia se cumple para países de esta última región pero habría que visualizar más gráficas para comprobarlo.
+
+Otra pregunta que es de interés es la distribución poblacional por edadese en 1950 y en 2020
+
+```{r vis 4, echo=FALSE}
+conapo_pob_ini%>%
+  filter(ENTIDAD=='República Mexicana' & AÑO==c(1950,1975,2000,2020))%>%
+  group_by(EDAD,AÑO)%>%
+  summarise(pob=sum(POBLACION)/10^6)%>%
+  ggplot(aes(x=EDAD,y=pob))+
+  geom_bar(position="dodge", stat="identity")+
+  xlab('Edad')+
+  ylab('Población en millones ')+
+  ggtitle('Población por edades en México al inicio del año')+
+  facet_grid(.~AÑO)
+```
+Resulta bastante interesante notar que la distribución de edades, a lo largo de los años, ha mantenido la tendencia decreciente, en el sentido de que hay menos personas de edades mayores. Esto claro, hasta el 2020, pues la tendencia cambia, demostrando que ahora hay un número casi igual de jóvenes menores a 30 años. A partir de esa edad vuelve a tomar su curso descendiente. La curva se aplana entre los 0 y 30 años de edad.
+
+
+Para finalizar, podemos determinar cuál es el estado con mayor población al inicio del 2020.
+```{r vis 5, echo=FALSE}
+conapo_pob_ini%>%
+  group_by(ENTIDAD,AÑO)%>%
+  filter(ENTIDAD!='República Mexicana' & AÑO==2020)%>%
+  summarise(pob=sum(POBLACION)/10^6)%>%
+  ggplot(aes(x=ENTIDAD,y=pob))+
+  geom_bar(position="dodge", stat="identity")+
+  xlab('Estado')+
+  ylab('Población en millones ')+
+  geom_text(aes(label=ENTIDAD),nudge_y = 1)+
+  ggtitle('Población por estados en México al inicio del 2020')
+```
+
+
+Ahora presnetaremos las gráficas interactivas.
+
+```{r vis 1 int, echo=FALSE}
+año_pob<-conapo_pob_ini%>%
+  group_by(AÑO)%>%
+  filter(AÑO<=2020 & ENTIDAD=='República Mexicana')%>%
+  summarise(POBLACIÓN=sum(POBLACION)/10^6)
+
+p<-año_pob%>%ggplot(aes(AÑO,POBLACIÓN))+
+  geom_point()+
+  xlab('Año')+
+  ylab("Pobalción (en millones)")+
+  ggtitle('Población al inicio de año en México (1950-220)')
+
+ggplotly(p)
+```
+
+
+```{r vis 2 int, echo=FALSE}
+p<-conapo_pob_ini%>%
+  group_by(SEXO,AÑO)%>%
+  filter(AÑO<=2020 & ENTIDAD=='República Mexicana')%>%
+  summarise(pob=sum(POBLACION)/10^6)%>%
+  ggplot(aes(AÑO,pob,col=SEXO))+
+  geom_line(size=2)+
+  xlab('Año')+
+  ylab('Población en Millones')+
+  ggtitle('Población por genero en México al inicio del año (1950-2020)')
+ggplotly(p)
+```
+
+```{r vis 3 int, echo=FALSE}
+p<-conapo_pob_ini%>%
+  filter(AÑO==2019 & ENTIDAD==c('Ciudad de México','Sinaloa','Chihuahua'))%>%
+  group_by(SEXO,ENTIDAD)%>%
+  summarise(pob=sum(POBLACION)/10^6)%>%
+  ggplot(aes(x=SEXO,y=pob,fill=SEXO))+
+  geom_bar(position="dodge", stat="identity")+
+  geom_text(aes(label=pob))+
+  xlab('Genero')+
+  ylab('Población en Millones')+
+  ggtitle('Población por genero en México (2019)')+
+  facet_grid(ENTIDAD~.)
+ggplotly(p)
+```
+```{r vis 4 int, echo=FALSE}
+p<-conapo_pob_ini%>%
+  filter(ENTIDAD=='República Mexicana' & AÑO==c(1950,1975,2000,2020))%>%
+  group_by(EDAD,AÑO)%>%
+  summarise(pob=sum(POBLACION)/10^6)%>%
+  ggplot(aes(x=EDAD,y=pob))+
+  geom_bar(position="dodge", stat="identity")+
+  xlab('Edad')+
+  ylab('Población en millones ')+
+  ggtitle('Población por edades en México al inicio del año')+
+  facet_grid(.~AÑO)
+ggplotly(p)
+```
+```{r vis 5 int, echo=FALSE}
+p<-conapo_pob_ini%>%
+  group_by(ENTIDAD,AÑO)%>%
+  filter(ENTIDAD!='República Mexicana' & AÑO==2020)%>%
+  summarise(pob=sum(POBLACION)/10^6)%>%
+  ggplot(aes(x=ENTIDAD,y=pob))+
+  geom_bar(position="dodge", stat="identity")+
+  xlab('Estado')+
+  ylab('Población en millones ')+
+  geom_text(aes(label=ENTIDAD),nudge_y = 1)+
+  ggtitle('Población por estados en México al inicio del 2020')
+ggplotly(p)
+```
+FIN.
+
+
+
+
+#TAREA_parte 2
+
+ejercicos de clase:
+
+
+```{r ej 1, echo=FALSE}
+library(MASS)
+vl <- data.frame(michelson)
+ggplot(Pima.tr2, aes(type))+geom_bar()
+```
+```{r, echo=FALSE}
+ggplot(Pima.tr2, aes(age,npreg))+geom_point()
+```
+```{r,echo=FALSE}
+head(data.frame(Titanic))
+```
+```{r para graficar todo,echo=FALSE}
+data.frame(Titanic)%>%
+ggplot(aes(x= Sex, fill = Survived))+
+  facet_wrap(~Class)+
+  geom_bar()+
+  labs(y = "Número de pasajeros" , title = "Sobrevivientes por Sexo y Clase")
+```
+
+```{r pasajeros por clase, echo=FALSE}
+data.frame(Titanic)%>%
+  group_by(Class)%>%
+  summarise(n=sum(Freq))%>%
+  ggplot(aes(x=Class,y=n))+
+  geom_bar(position="dodge", stat="identity")+
+  geom_text(aes(label=n),nudge_y=1)
+```
+```{r ej 2, echo=FALSE}
+data(father.son)
+ggplot(father.son, aes(fheight, sheight)) + geom_point() +
+       geom_smooth(method="lm", colour="red") +
+       geom_abline(slope=1, intercept=0)
+```
+```{r,echo=FALSE}
+data(father.son, package="UsingR")
+ggplot(father.son, aes(fheight, sheight)) + geom_point() +
+       geom_smooth(method="lm", colour="red", se=FALSE) +
+       stat_smooth()
+```
+
+
+
+
+
